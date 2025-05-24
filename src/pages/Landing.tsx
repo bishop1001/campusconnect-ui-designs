@@ -87,7 +87,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-white">
       <div className="absolute top-0 w-full h-[500px] bg-gradient-to-br from-blue-600/5 via-transparent to-emerald-600/5 -z-10"></div>
-      <div className="absolute top-0 w-full h-[800px] bg-[radial-gradient(ellipse_at_center,rgba(var(--color-primary),0.15),transparent_50%)] -z-10"></div>
+      <div className="absolute top-0 w-full h-[800px] bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15),transparent_50%)] -z-10"></div>
 
       <Navbar isAuthenticated={false} />
       
@@ -111,16 +111,29 @@ export default function Landing() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 shadow-lg shadow-blue-600/20 transition-all duration-300 hover:translate-y-[-2px]">
-                Join Now with University Email
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Button 
+                size="lg" 
+                className="bg-blue-600 hover:bg-blue-700 text-lg px-8 shadow-lg shadow-blue-600/20 transition-all duration-300 hover:translate-y-[-2px]"
+                asChild
+              >
+                <Link to="/auth?tab=signup">
+                  Join Now with University Email
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 transition-all duration-300">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="text-lg px-8 transition-all duration-300"
+                onClick={() => {
+                  document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 Learn More
               </Button>
             </div>
             
-            <div className="flex items-center space-x-6 text-sm text-gray-600">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-500" />
                 <span>100% Free for Students</span>
@@ -264,7 +277,7 @@ export default function Landing() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+      <section id="about" className="py-24 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
         <div className="container">
           <div className="text-center space-y-4 mb-16">
             <Badge className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm px-4 py-1">
@@ -374,7 +387,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-28 relative overflow-hidden">
+      <section id="contact" className="py-28 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 -z-10"></div>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3')] opacity-10 -z-10 bg-cover bg-center"></div>
         
@@ -391,13 +404,25 @@ export default function Landing() {
               Join the community of students building a smarter, safer marketplace for campus commerce.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/auth">
-                <Button size="lg" variant="secondary" className="text-lg px-8 font-medium shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="text-lg px-8 font-medium shadow-lg hover:-translate-y-1 transition-all duration-300"
+                asChild
+              >
+                <Link to="/auth?tab=signup">
                   Sign Up with University Email
                   <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Button size="lg" variant="outline" className="text-lg px-8 border-white text-white hover:bg-white/20 hover:text-white transition-all duration-300">
+                </Link>
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="text-lg px-8 border-white text-white hover:bg-white/20 hover:text-white transition-all duration-300"
+                onClick={() => {
+                  document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 Explore Features
                 <ChevronRight className="ml-1 h-5 w-5" />
               </Button>
@@ -462,7 +487,7 @@ export default function Landing() {
             <div>
               <h4 className="font-semibold mb-4">Platform</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Universities</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">API</a></li>
@@ -474,7 +499,7 @@ export default function Landing() {
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+                <li><a href="#contact" className="hover:text-white transition-colors">Contact Us</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Safety Tips</a></li>
               </ul>
             </div>

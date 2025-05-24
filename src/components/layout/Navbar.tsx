@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Bell, Search, Plus, MessageSquare, User, Settings, LogOut } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Link, useNavigate } from "react-router-dom";
 
 interface NavbarProps {
   isAuthenticated?: boolean;
@@ -19,15 +20,25 @@ interface NavbarProps {
 }
 
 export function Navbar({ isAuthenticated = false, onCreateListing }: NavbarProps) {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+    window.location.reload(); // Force refresh to update authentication state
+  };
+
   if (!isAuthenticated) {
     return (
       <nav className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">CC</span>
-            </div>
-            <span className="font-semibold text-xl">CampusConnect</span>
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">CC</span>
+              </div>
+              <span className="font-semibold text-xl">CampusConnect</span>
+            </Link>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -43,11 +54,11 @@ export function Navbar({ isAuthenticated = false, onCreateListing }: NavbarProps
           </div>
 
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              Login
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/auth">Login</Link>
             </Button>
-            <Button size="sm" className="bg-blue-500 hover:bg-blue-600">
-              Sign Up
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600" asChild>
+              <Link to="/auth?tab=signup">Sign Up</Link>
             </Button>
           </div>
         </div>
@@ -59,10 +70,12 @@ export function Navbar({ isAuthenticated = false, onCreateListing }: NavbarProps
     <nav className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">CC</span>
-          </div>
-          <span className="font-semibold text-xl">CampusConnect</span>
+          <Link to="/dashboard" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">CC</span>
+            </div>
+            <span className="font-semibold text-xl">CampusConnect</span>
+          </Link>
         </div>
         
         <div className="flex-1 max-w-lg mx-8">
@@ -120,7 +133,7 @@ export function Navbar({ isAuthenticated = false, onCreateListing }: NavbarProps
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>
