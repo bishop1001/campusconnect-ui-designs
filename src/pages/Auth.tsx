@@ -17,6 +17,11 @@ export default function Auth() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [date, setDate] = useState<Date>();
+  const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+
+  const switchToSignup = () => {
+    setActiveTab("signup");
+  };
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-emerald-50 p-4 overflow-hidden">
@@ -45,7 +50,7 @@ export default function Auth() {
         </div>
 
         <div className="bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-xl border border-white/50">
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "login" | "signup")} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-2">
               <TabsTrigger value="login" className="text-base">Login</TabsTrigger>
               <TabsTrigger value="signup" className="text-base">Sign Up</TabsTrigger>
@@ -118,7 +123,7 @@ export default function Auth() {
                     Don't have an account? 
                     <button 
                       type="button"
-                      onClick={() => document.querySelector('[data-value="signup"]')?.click()}
+                      onClick={switchToSignup}
                       className="text-blue-600 hover:underline ml-1"
                     >
                       Sign up now
