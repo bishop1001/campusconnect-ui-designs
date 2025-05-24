@@ -198,7 +198,7 @@ export default function Auth() {
                       <Label htmlFor="remember" className="text-sm">Remember me for 30 days</Label>
                     </div>
                     <Button 
-                      type="submit" 
+                      type="submit"
                       disabled={isLoading}
                       className="w-full bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 text-base py-5"
                     >
@@ -380,7 +380,7 @@ export default function Auth() {
                       </Label>
                     </div>
                     <Button 
-                      type="submit" 
+                      type="submit"
                       disabled={isLoading}
                       className="w-full bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 text-base py-5"
                     >
