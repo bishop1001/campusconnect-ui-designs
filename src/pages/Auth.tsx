@@ -11,16 +11,90 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Eye, EyeOff, ArrowLeft, Shield, Mail } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Auth() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [date, setDate] = useState<Date>();
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+  const navigate = useNavigate();
+  
+  // Form states
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const switchToSignup = () => {
     setActiveTab("signup");
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      if (loginEmail && loginPassword) {
+        // For demo purposes, any email and password will work
+        toast.success("Login successful!");
+        // Store something in localStorage to simulate being logged in
+        localStorage.setItem("campusconnect-user", JSON.stringify({ 
+          email: loginEmail, 
+          name: "Demo User",
+          isLoggedIn: true
+        }));
+        navigate("/dashboard");
+      } else {
+        toast.error("Please fill all required fields");
+      }
+      setIsLoading(false);
+    }, 1000);
+  };
+
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Validation
+    if (!fullName || !signupEmail || !signupPassword || !confirmPassword) {
+      toast.error("Please fill all required fields");
+      setIsLoading(false);
+      return;
+    }
+
+    if (signupPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!agreeToTerms) {
+      toast.error("Please agree to the terms and conditions");
+      setIsLoading(false);
+      return;
+    }
+
+    // Simulate API call delay
+    setTimeout(() => {
+      toast.success("Account created successfully!");
+      // Store user info in localStorage
+      localStorage.setItem("campusconnect-user", JSON.stringify({ 
+        email: signupEmail,
+        name: fullName,
+        isLoggedIn: true
+      }));
+      navigate("/dashboard");
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
@@ -71,54 +145,66 @@ export default function Auth() {
                     </div>
                   </div>
                 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">University Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="yourname@university.edu"
-                      required
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password">Password</Label>
-                      <a href="#" className="text-xs text-blue-600 hover:underline">
-                        Forgot password?
-                      </a>
-                    </div>
-                    <div className="relative">
+                  <form onSubmit={handleLogin} className="space-y-5">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">University Email</Label>
                       <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
+                        id="email"
+                        type="email"
+                        placeholder="yourname@university.edu"
                         required
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
                         className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="remember" />
-                    <Label htmlFor="remember" className="text-sm">Remember me for 30 days</Label>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 text-base py-5">
-                    Login
-                  </Button>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="password">Password</Label>
+                        <a href="#" className="text-xs text-blue-600 hover:underline">
+                          Forgot password?
+                        </a>
+                      </div>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          required
+                          value={loginPassword}
+                          onChange={(e) => setLoginPassword(e.target.value)}
+                          className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="remember" 
+                        checked={rememberMe}
+                        onCheckedChange={(checked) => setRememberMe(checked === true)}
+                      />
+                      <Label htmlFor="remember" className="text-sm">Remember me for 30 days</Label>
+                    </div>
+                    <Button 
+                      type="submit" 
+                      disabled={isLoading}
+                      className="w-full bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 text-base py-5"
+                    >
+                      {isLoading ? "Logging in..." : "Login"}
+                    </Button>
+                  </form>
                   <div className="text-center text-sm">
                     Don't have an account? 
                     <button 
@@ -129,7 +215,7 @@ export default function Auth() {
                       Sign up now
                     </button>
                   </div>
-                </CardFooter>
+                </CardContent>
               </Card>
             </TabsContent>
             
@@ -148,141 +234,160 @@ export default function Auth() {
                     </div>
                   </div>
                 
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="John Doe"
-                      required
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signupEmail">University Email</Label>
-                    <Input
-                      id="signupEmail"
-                      type="email"
-                      placeholder="yourname@university.edu"
-                      required
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
-                    />
-                    <p className="text-xs text-gray-500">
-                      Must be an official university email address
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signupPassword">Password</Label>
-                    <div className="relative">
+                  <form onSubmit={handleSignup} className="space-y-5">
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName">Full Name</Label>
                       <Input
-                        id="signupPassword"
-                        type={showPassword ? "text" : "password"}
+                        id="fullName"
+                        type="text"
+                        placeholder="John Doe"
                         required
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
                         className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <div className="relative">
+                    <div className="space-y-2">
+                      <Label htmlFor="signupEmail">University Email</Label>
                       <Input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
+                        id="signupEmail"
+                        type="email"
+                        placeholder="yourname@university.edu"
                         required
+                        value={signupEmail}
+                        onChange={(e) => setSignupEmail(e.target.value)}
                         className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
+                      <p className="text-xs text-gray-500">
+                        Must be an official university email address
+                      </p>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      required
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
-                    />
-                    <p className="text-xs text-gray-500">
-                      For admin verification and safety purposes only
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Date of Birth</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !date && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={date}
-                          onSelect={setDate}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                          className={cn("p-3 pointer-events-auto")}
+                    <div className="space-y-2">
+                      <Label htmlFor="signupPassword">Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="signupPassword"
+                          type={showPassword ? "text" : "password"}
+                          required
+                          value={signupPassword}
+                          onChange={(e) => setSignupPassword(e.target.value)}
+                          className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
                         />
-                      </PopoverContent>
-                    </Popover>
-                    <p className="text-xs text-gray-500">
-                      For admin verification purposes only
-                    </p>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <Checkbox id="terms" required className="mt-1" />
-                    <Label htmlFor="terms" className="text-sm font-normal">
-                      I agree to the{" "}
-                      <a href="#" className="text-blue-600 hover:underline">
-                        Terms & Conditions
-                      </a>{" "}
-                      and{" "}
-                      <a href="#" className="text-blue-600 hover:underline">
-                        Privacy Policy
-                      </a>
-                    </Label>
-                  </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          type={showConfirmPassword ? "text" : "password"}
+                          required
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="+1 (555) 123-4567"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/40"
+                      />
+                      <p className="text-xs text-gray-500">
+                        For admin verification and safety purposes only
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Date of Birth</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !date && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {date ? format(date, "PPP") : <span>Pick a date</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <p className="text-xs text-gray-500">
+                        For admin verification purposes only
+                      </p>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <Checkbox 
+                        id="terms" 
+                        required 
+                        className="mt-1"
+                        checked={agreeToTerms}
+                        onCheckedChange={(checked) => setAgreeToTerms(checked === true)}
+                      />
+                      <Label htmlFor="terms" className="text-sm font-normal">
+                        I agree to the{" "}
+                        <a href="#" className="text-blue-600 hover:underline">
+                          Terms & Conditions
+                        </a>{" "}
+                        and{" "}
+                        <a href="#" className="text-blue-600 hover:underline">
+                          Privacy Policy
+                        </a>
+                      </Label>
+                    </div>
+                    <Button 
+                      type="submit" 
+                      disabled={isLoading}
+                      className="w-full bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 text-base py-5"
+                    >
+                      {isLoading ? "Creating Account..." : "Create Account"}
+                    </Button>
+                  </form>
                 </CardContent>
-                <CardFooter>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 text-base py-5">
-                    Create Account
-                  </Button>
-                </CardFooter>
               </Card>
             </TabsContent>
           </Tabs>
